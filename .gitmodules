@@ -1,0 +1,3 @@
+[submodule "src/app/_lib_service"]
+	path = src/app/_lib_service
+	url = https://bitbucket.org/yasukosan/aglibmodule
