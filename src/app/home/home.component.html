@@ -1,0 +1,38 @@
+<div class="row">
+    <div class="col-sm-4 col-md-2">aaaa</div>
+    <div class="col-sm-4 col-md-8">
+        <br>
+        <h3>バッチ<small class="text-muted">コイ</small>する沙保里</h3>
+        <br><br><br>
+        <form data-toggle="validator" role="form">
+            <div class="form-group row">
+                <label
+                    for="text3a" class="col-sm-2 col-form-label">UserName:</label>
+                <div class="col-sm-10">
+                    <input
+                        type="text" name="username"
+                        class="form-control is-invalid"
+                        [(ngModel)]="forms.userName" required>
+                    <div class="invalid-feedback">Please enter a User Name</div>
+                </div>
+            </div>
+            <div class="form-check">
+                <input
+                    class="form-check-input" type="radio"
+                    name="radio1" id="radio1a" [(ngModel)]="forms.clossPlaform">
+                <label class="form-check-label" for="radio1a">外部認証器</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="radio1" id="radio1b">
+                <label class="form-check-label" for="radio1b">内蔵認証器</label>
+            </div>
+            <div class="col-sm-2 float-right" *ngIf="checkForm()">
+                <button
+                    type="submit" class="btn btn-primary mb-2"
+                    (click)="doLogin()">Submit</button>
+            </div>
+        </form>
+    </div>
+    <div class="col-sm-4 col-md-2">aaa</div>
+</div>
+    
