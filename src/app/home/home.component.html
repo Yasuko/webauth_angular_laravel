@@ -18,12 +18,14 @@
             </div>
             <div class="form-check">
                 <input
-                    class="form-check-input" type="radio"
-                    name="radio1" id="radio1a" [(ngModel)]="forms.clossPlaform">
+                    class="form-check-input" type="checkbox"
+                    name="radio1" id="radio1a" [(ngModel)]="forms.clossPlatform">
                 <label class="form-check-label" for="radio1a">外部認証器</label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="radio1" id="radio1b">
+                <input
+                    class="form-check-input" type="checkbox"
+                    name="radio1" id="radio1b" [(ngModel)]="forms.builtIn">
                 <label class="form-check-label" for="radio1b">内蔵認証器</label>
             </div>
             <div class="col-sm-2 float-right" *ngIf="checkForm()">
@@ -32,6 +34,9 @@
                     (click)="doLogin()">Submit</button>
             </div>
         </form>
+        <div class="container">
+            <textarea cols=100 rows=10>{{ _prop.message }}</textarea>
+        </div>
     </div>
     <div class="col-sm-4 col-md-2">aaa</div>
 </div>

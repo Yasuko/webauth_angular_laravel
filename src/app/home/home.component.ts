@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
-import { HttpService } from '../_lib_service/index_helper';
+import {
+    HttpService, CredentialService,
+    AuthCredentialOption, publicKeyCredentialRequestOptions, 
+} from '../_lib_service/index_helper';
 
 @Component({
   selector: 'app-home',
@@ -13,16 +16,19 @@ import { HttpService } from '../_lib_service/index_helper';
 
 export class HomeComponent implements OnInit {
 
-
+    public _prop    = {
+        message:    'aa',
+    }
     public forms    = {
-        userName:       'aaa',
-        closPlatform:   true,
+        userName:       '',
+        clossPlatform:   true,
         builtIn:        false
     }
 
     constructor(
         private readonly httpClient: HttpClient,
-        private  httpService: HttpService,
+        private httpService: HttpService,
+        private credentialService: CredentialService,
     ) {
     }
 
@@ -33,7 +39,7 @@ export class HomeComponent implements OnInit {
 
     public doLogin(): void
     {
-        alert('aa');
+        this.login();
     }
 
     public checkForm(): boolean
@@ -51,17 +57,45 @@ export class HomeComponent implements OnInit {
     private login() 
     {
         const url = 'https://yasukosan.dip.jp/fido_angular/server/public/api/assertion/start';
+        this.httpService.setServerURL(url);
         // 入力フォームの内容を取得
-        let body = new HttpParams();
-
-        body = body.set('username', this.forms.userName);
-
-    
-        this.httpClient.post(url, body)
-          .subscribe(
-            response => this.handleAssertionStart(response), () => {
-              this.messagesService.showErrorToast('Login failed');
-            }
-          );
+        const body = this.httpService.buildParams(
+                this.credentialService.buildAuthCredential(
+                    this.forms.userName, 'preferrd'
+                )
+            );
+   
+        this.httpClient.post<AuthCredentialOption>(url, body)
+            .subscribe(response => {
+                console.log(response);
+                
+                this.loginFinish(response);
+            });
     }
+
+    private loginFinish(response: any): any
+    {
+
+        this.credentialService.convertCredentialRequestOptions({
+            publicKey: response.publicKeyCredentialRequestOptions
+        })
+        .then((credential)=>{
+            console.log(credential);
+            const url = 'https://yasukosan.dip.jp/fido_angular/server/public/api/assertion/finish';
+
+            this.httpService.setServerURL(url);
+
+            const assertionResponse = {
+                assertionId: response.assertionId,
+                credential
+            };
+            this.httpClient.post<AuthCredentialOption>(url, assertionResponse)
+            .subscribe(response => {
+                console.log(response);
+                
+                this.loginFinish(response);
+            });
+        });
+    }
+
 }
