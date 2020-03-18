@@ -16,13 +16,17 @@ import {
 
 export class HomeComponent implements OnInit {
 
-    public _prop    = {
-        message:    'aa',
-    }
     public forms    = {
         userName:       '',
         clossPlatform:   true,
         builtIn:        false
+    }
+
+    private urls    = {
+        'registFirst':      'https://yasukosan.dip.jp/fido_angular/server/public/api/registration/start',
+        'registFinish':     'https://yasukosan.dip.jp/fido_angular/server/public/api/registration/finish',
+        'loginFirst':       'https://yasukosan.dip.jp/fido_angular/server/public/api/assertion/start',
+        'loginFinish':      'https://yasukosan.dip.jp/fido_angular/server/public/api/assertion/finish',
     }
 
     constructor(
@@ -42,6 +46,11 @@ export class HomeComponent implements OnInit {
         this.login();
     }
 
+    public doRegist(): void
+    {
+        this.regist();
+    }
+
     public checkForm(): boolean
     {
         if (this.forms.userName.length >= 2
@@ -52,25 +61,60 @@ export class HomeComponent implements OnInit {
         }
     }
 
-
+    private regist()
+    {
+        this.firstContact(this.urls.registFirst, 'regist');
+    }
 
     private login() 
     {
-        const url = 'https://yasukosan.dip.jp/fido_angular/server/public/api/assertion/start';
+        this.firstContact(this.urls.loginFirst, 'login');
+    }
+
+    private firstContact(url: string, job: string): void
+    {
         this.httpService.setServerURL(url);
         // 入力フォームの内容を取得
         const body = this.httpService.buildParams(
                 this.credentialService.buildAuthCredential(
-                    this.forms.userName, 'preferrd'
+                    this.forms.userName, 'required'
                 )
             );
    
         this.httpClient.post<AuthCredentialOption>(url, body)
             .subscribe(response => {
                 console.log(response);
-                
-                this.loginFinish(response);
+                if (job === 'regist') {
+                    this.registFinish(response);
+                } else if (job === 'login') {
+                    this.loginFinish(response);
+                }
             });
+    }
+
+    private registFinish(response: any): any
+    {
+        this.credentialService.convertCredentialCreateOptions({
+            publicKey: response.publicKeyCredentialCreationOptions
+        })
+        .then((credential) => {
+            console.log(credential);
+
+            this.httpService.setServerURL(this.urls.registFinish);
+
+            const assertionResponse = {
+                registrationId: response.registrationId,
+                credential
+            };
+            this.httpClient.post<AuthCredentialOption>(
+                this.urls.registFinish,
+                assertionResponse
+            ).subscribe(response => {
+                console.log(response);
+                alert('Success');
+            });
+        });
+
     }
 
     private loginFinish(response: any): any
@@ -81,19 +125,21 @@ export class HomeComponent implements OnInit {
         })
         .then((credential)=>{
             console.log(credential);
-            const url = 'https://yasukosan.dip.jp/fido_angular/server/public/api/assertion/finish';
 
-            this.httpService.setServerURL(url);
+            this.httpService.setServerURL(this.urls.loginFinish);
 
             const assertionResponse = {
                 assertionId: response.assertionId,
                 credential
             };
-            this.httpClient.post<AuthCredentialOption>(url, assertionResponse)
-            .subscribe(response => {
+            this.httpClient.post<AuthCredentialOption>(
+                this.urls.loginFinish,
+                assertionResponse
+            ).subscribe(response => {
                 console.log(response);
-                
-                this.loginFinish(response);
+                if (response) {
+                    alert('Success');
+                }
             });
         });
     }

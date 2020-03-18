@@ -22,7 +22,6 @@ import { HelperModule } from './_lib_service/helper-module';
     FormsModule,
     HttpClientModule,
     HelperModule,
-    // NgbModule
   ],
   providers: [],
   bootstrap: [AppComponent]
