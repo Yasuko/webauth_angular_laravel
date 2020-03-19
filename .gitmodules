@@ -1,3 +1,6 @@
 [submodule "src/app/_lib_service"]
 	path = src/app/_lib_service
 	url = https://bitbucket.org/yasukosan/aglibmodule
+[submodule "server/app/_lib"]
+	path = server/app/_lib
+	url = https://bitbucket.org/yasukosan/laravel_lib
