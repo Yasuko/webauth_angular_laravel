@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import {
-    CredentialService,
-    AuthCredentialOption, 
-} from '../_lib_service/index_helper';
+    convertCredentialCreateOptions,
+    convertCredentialRequestOptions,
+} from '../_lib_service/fido/credential.service';
 
 @Component({
   selector: 'app-home',
@@ -31,7 +31,6 @@ export class HomeComponent implements OnInit {
 
     constructor(
         private readonly httpClient: HttpClient,
-        private credentialService: CredentialService,
     ) {
     }
 
@@ -88,7 +87,7 @@ export class HomeComponent implements OnInit {
      */
     private async registFinish(response: any): Promise<any>
     {
-        const credential = await this.credentialService.convertCredentialCreateOptions({
+        const credential = await convertCredentialCreateOptions({
             publicKey: response.publicKeyCredentialCreationOptions
         });
 
@@ -106,7 +105,7 @@ export class HomeComponent implements OnInit {
      */
     private async loginFinish(response: any): Promise<any>
     {
-        const credential = await this.credentialService.convertCredentialRequestOptions({
+        const credential = await convertCredentialRequestOptions({
             publicKey: response.publicKeyCredentialRequestOptions
         });
 
@@ -124,7 +123,7 @@ export class HomeComponent implements OnInit {
      */
     private finishContact(response, url): any
     {
-        this.httpClient.post<AuthCredentialOption>(
+        this.httpClient.post<any>(
             url,
             response
         ).subscribe(response => {
