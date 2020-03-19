@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 import {
-    HttpService, CredentialService,
-    AuthCredentialOption, publicKeyCredentialRequestOptions, 
+    CredentialService,
+    AuthCredentialOption, 
 } from '../_lib_service/index_helper';
 
 @Component({
@@ -31,7 +31,6 @@ export class HomeComponent implements OnInit {
 
     constructor(
         private readonly httpClient: HttpClient,
-        private httpService: HttpService,
         private credentialService: CredentialService,
     ) {
     }
@@ -39,18 +38,6 @@ export class HomeComponent implements OnInit {
     ngOnInit(): void {
         // this.setup();
     }
-
-
-    public doLogin(): void
-    {
-        this.login();
-    }
-
-    public doRegist(): void
-    {
-        this.regist();
-    }
-
     public checkForm(): boolean
     {
         if (this.forms.userName.length >= 2
@@ -60,28 +47,30 @@ export class HomeComponent implements OnInit {
             return false;
         }
     }
-
-    private regist()
-    {
-        this.firstContact(this.urls.registFirst, 'regist');
-    }
-
-    private login() 
+    // ログイン開始
+    public doLogin(): void
     {
         this.firstContact(this.urls.loginFirst, 'login');
     }
 
+    // ユーザー登録開始
+    public doRegist(): void
+    {
+        this.firstContact(this.urls.registFirst, 'regist');
+    }
+
+    /**
+     * 
+     * @param url 
+     * @param job 
+     */
     private firstContact(url: string, job: string): void
     {
-        this.httpService.setServerURL(url);
-        // 入力フォームの内容を取得
-        const body = this.httpService.buildParams(
-                this.credentialService.buildAuthCredential(
-                    this.forms.userName, 'required'
-                )
-            );
-   
-        this.httpClient.post<AuthCredentialOption>(url, body)
+        const request = {
+                username: this.forms.userName,
+                userVerifivation: 'required',
+        };
+        this.httpClient.post<any>(url, request)
             .subscribe(response => {
                 console.log(response);
                 if (job === 'regist') {
@@ -92,55 +81,57 @@ export class HomeComponent implements OnInit {
             });
     }
 
-    private registFinish(response: any): any
+    /**
+     * CredentialCreatorOptionsをnavigator.createに渡し
+     * ユーザー作成処理を行う
+     * @param response 
+     */
+    private async registFinish(response: any): Promise<any>
     {
-        this.credentialService.convertCredentialCreateOptions({
+        const credential = await this.credentialService.convertCredentialCreateOptions({
             publicKey: response.publicKeyCredentialCreationOptions
-        })
-        .then((credential) => {
-            console.log(credential);
-
-            this.httpService.setServerURL(this.urls.registFinish);
-
-            const assertionResponse = {
-                registrationId: response.registrationId,
-                credential
-            };
-            this.httpClient.post<AuthCredentialOption>(
-                this.urls.registFinish,
-                assertionResponse
-            ).subscribe(response => {
-                console.log(response);
-                alert('Success');
-            });
         });
 
+        const _response = {
+            registrationId: response.registrationId,
+            credential
+        };
+        this.finishContact(_response, this.urls.registFinish);
     }
 
-    private loginFinish(response: any): any
+    /**
+     * CredentialRequestOptionsをnavigator.getに渡し
+     * 認証処理を行う
+     * @param response 
+     */
+    private async loginFinish(response: any): Promise<any>
     {
-
-        this.credentialService.convertCredentialRequestOptions({
+        const credential = await this.credentialService.convertCredentialRequestOptions({
             publicKey: response.publicKeyCredentialRequestOptions
-        })
-        .then((credential)=>{
-            console.log(credential);
+        });
 
-            this.httpService.setServerURL(this.urls.loginFinish);
+        const _response = {
+            assertionId: response.assertionId,
+            credential
+        };
+        this.finishContact(_response, this.urls.loginFinish);
+    }
 
-            const assertionResponse = {
-                assertionId: response.assertionId,
-                credential
-            };
-            this.httpClient.post<AuthCredentialOption>(
-                this.urls.loginFinish,
-                assertionResponse
-            ).subscribe(response => {
-                console.log(response);
-                if (response) {
-                    alert('Success');
-                }
-            });
+    /**
+     * navigatorのレスポンスをサーバーに返す
+     * @param response 
+     * @param url 
+     */
+    private finishContact(response, url): any
+    {
+        this.httpClient.post<AuthCredentialOption>(
+            url,
+            response
+        ).subscribe(response => {
+            console.log(response);
+            if (response) {
+                alert('Success');
+            }
         });
     }
 
