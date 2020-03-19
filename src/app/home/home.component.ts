@@ -6,15 +6,24 @@ import {
     convertCredentialRequestOptions,
 } from '../_lib_service/fido/credential.service';
 
+import {
+    fadeInAnimation
+} from '../_lib_service/index_helper';
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: [
-      './home.component.scss'
+    selector: 'app-home',
+    templateUrl: './home.component.html',
+    styleUrls: [
+        './home.component.scss'
+    ],
+    animations: [
+        fadeInAnimation
     ]
+
 })
 
 export class HomeComponent implements OnInit {
+
+    public isLoading = 'default';
 
     public forms    = {
         userName:       '',
@@ -69,9 +78,11 @@ export class HomeComponent implements OnInit {
                 username: this.forms.userName,
                 userVerifivation: 'required',
         };
+
+        this.isLoading = 'loading';
         this.httpClient.post<any>(url, request)
             .subscribe(response => {
-                console.log(response);
+                this.isLoading = 'loadend';
                 if (job === 'regist') {
                     this.registFinish(response);
                 } else if (job === 'login') {
@@ -123,11 +134,12 @@ export class HomeComponent implements OnInit {
      */
     private finishContact(response, url): any
     {
+        this.isLoading = 'loading';
         this.httpClient.post<any>(
             url,
             response
         ).subscribe(response => {
-            console.log(response);
+            this.isLoading = 'loadend';
             if (response) {
                 alert('Success');
             }
