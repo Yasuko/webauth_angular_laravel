@@ -31,11 +31,14 @@ export class HomeComponent implements OnInit {
         builtIn:        false
     }
 
-    private urls    = {
-        'registFirst':      'https://yasukosan.dip.jp/webauth_angular_laravel/server/public/api/registration/start',
-        'registFinish':     'https://yasukosan.dip.jp/webauth_angular_laravel/server/public/api/registration/finish',
-        'loginFirst':       'https://yasukosan.dip.jp/webauth_angular_laravel/server/public/api/assertion/start',
-        'loginFinish':      'https://yasukosan.dip.jp/webauth_angular_laravel/server/public/api/assertion/finish',
+    private server = 'https://yasukosan.dip.jp/';
+    private path = 'webauth_angular_laravel/server/public/';
+
+    private apis    = {
+        'registFirst':      'api/registration/start',
+        'registFinish':     'api/registration/finish',
+        'loginFirst':       'api/assertion/start',
+        'loginFinish':      'api/assertion/finish',
     }
 
     constructor(
@@ -58,13 +61,19 @@ export class HomeComponent implements OnInit {
     // ログイン開始
     public doLogin(): void
     {
-        this.firstContact(this.urls.loginFirst, 'login');
+        this.firstContact(
+            this.server + this.path + this.apis.loginFirst,
+            'login'
+        );
     }
 
     // ユーザー登録開始
     public doRegist(): void
     {
-        this.firstContact(this.urls.registFirst, 'regist');
+        this.firstContact(
+            this.server + this.path + this.apis.registFirst,
+            'regist'
+        );
     }
 
     /**
@@ -106,7 +115,10 @@ export class HomeComponent implements OnInit {
             registrationId: response.registrationId,
             credential
         };
-        this.finishContact(_response, this.urls.registFinish);
+        this.finishContact(
+            _response,
+            this.server + this.path + this.apis.registFinish
+        );
     }
 
     /**
@@ -124,7 +136,10 @@ export class HomeComponent implements OnInit {
             assertionId: response.assertionId,
             credential
         };
-        this.finishContact(_response, this.urls.loginFinish);
+        this.finishContact(
+            _response,
+            this.server + this.path + this.apis.loginFinish
+        );
     }
 
     /**

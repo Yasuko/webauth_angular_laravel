@@ -1,27 +1,73 @@
-# FidoAngular2
+# WebAuth Angular Laravel
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.6.
+# Required
+- Apache
+    - Authenticated SSL required
+    - Unauthenticated certificate can be used for localhost
+- MariaDB
+- Redis (option)
+- php7.3 or later
+- nodejs 10.16 or later
+- angular 9 or later
 
-## Development server
+All the WebAuth implementation parts are described in export, so should they be readable with vue.js?
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Please execute with "--recursive" option to include submodule when git clone
 
-## Code scaffolding
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+# Supported attestation
+* fido-u2f
+* packed
 
-## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+# configulation
+### client configuration
 
-## Running unit tests
+~~~cmd
+app/home/home.component.ts
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+#34 ~ 35
+private server = 'your server domain';
+private path = 'Document root to server path';
+~~~
 
-## Running end-to-end tests
+### server configuration
+~~~cmd
+server/.env
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+#10 ~ 14
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your database name
+DB_USERNAME=access user name
+DB_PASSWORD=access user password
 
-## Further help
+~~~
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+# setup Server
+
+### 1:: install angular9 and npm modules
+~~~cmd
+cd [project top]
+npm install
+~~~
+
+### 2:: install laravel and php modules
+~~~cmd
+cd server/
+composer install
+~~~
+
+### 3:: database migration
+~~~cmd
+php artisan migrate
+~~~
+
+
+# start sample
+
+### build and start
+~~~cmd
+cd [project top]
+ng serve --host [your domain] --ssl true --ssl-key 'private key path' --ssl-cert 'cert path'
+~~~
