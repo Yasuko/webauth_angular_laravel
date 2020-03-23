@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\AppUser;
 use App\Credentials;
 use App\RedisServer;
+use App\CacheUser;
 
 use App\_lib\Fido\Fido;
 // use \CBOR\CBOREncoder;
@@ -50,10 +51,14 @@ class RegisterController extends Controller
             ->getClientCredentialOption();
 
         // RedisにRPIDを登録
-        $redis = new RedisServer();
-        $redis->setKeyForFIDO($cr->getHashKeys());
+        // $redis = new RedisServer();
+        // $redis->setKeyForFIDO($cr->getHashKeys());
+        // データベースにRPIDを登録
+        CacheUser::addCache(
+            $cr->getHashKeys()
+        );
 
-        // データベースに登録
+        // データベースにユーザー登録
         AppUser::addAppUser(AppUser::buildRegistData(
             $request['username'],
             $cr->getHashKeys()
@@ -75,8 +80,11 @@ class RegisterController extends Controller
         $cr = Fido::CredentialRepository();
 
         // registrationId検証
+        /*
         $redis = new RedisServer();
         $keys = $redis->searchKeyForFIDO($request['registrationId']);
+         */
+        $keys = CacheUser::searchCache($request['registrationId']);
         if (!$keys) {
             return false;
         }
@@ -95,10 +103,10 @@ class RegisterController extends Controller
             $cr->setRP(['id' => $this->rpid, 'name' => $this->rpname])
                 ->checkRP($at->callClientDataJsonRepository()->getclientData())
         ){
-                // 取得した公開鍵の保存
-                Credentials::addCredential(
-                    $at->getCredentialSaveData($user)
-                );
+            // 取得した公開鍵の保存
+            Credentials::addCredential(
+                $at->getCredentialSaveData($user)
+            );
         } else {
             return false;
         }

@@ -32,10 +32,10 @@ export class HomeComponent implements OnInit {
     }
 
     private urls    = {
-        'registFirst':      'https://yasukosan.dip.jp/fido_angular/server/public/api/registration/start',
-        'registFinish':     'https://yasukosan.dip.jp/fido_angular/server/public/api/registration/finish',
-        'loginFirst':       'https://yasukosan.dip.jp/fido_angular/server/public/api/assertion/start',
-        'loginFinish':      'https://yasukosan.dip.jp/fido_angular/server/public/api/assertion/finish',
+        'registFirst':      'https://yasukosan.dip.jp/webauth_angular_laravel/server/public/api/registration/start',
+        'registFinish':     'https://yasukosan.dip.jp/webauth_angular_laravel/server/public/api/registration/finish',
+        'loginFirst':       'https://yasukosan.dip.jp/webauth_angular_laravel/server/public/api/assertion/start',
+        'loginFinish':      'https://yasukosan.dip.jp/webauth_angular_laravel/server/public/api/assertion/finish',
     }
 
     constructor(

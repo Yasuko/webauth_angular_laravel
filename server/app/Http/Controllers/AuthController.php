@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\AppUser;
 use App\Credentials;
 use App\RedisServer;
+use App\CacheUser;
 
 use App\_lib\Fido\Fido;
 
@@ -47,8 +48,12 @@ class AuthController extends Controller
             ->getClientCredentialOption();
 
         // RedisにRPID、Challenge、AssertionIdを登録
-        $redis = new RedisServer();
-        $redis->setKeyForFIDO($cr->getHashKeys());
+        // $redis = new RedisServer();
+        // $redis->setKeyForFIDO($cr->getHashKeys());
+        // データベースにRPIDを登録
+        CacheUser::addCache(
+            $cr->getHashKeys()
+        );
 
         return $clientCredentialOption;
     }
@@ -62,8 +67,11 @@ class AuthController extends Controller
     public function authenticateFinish(Request $request): string
     {
         // AssertionId検証
+        /*
         $redis = new RedisServer();
         $keys = $redis->searchKeyForFIDO($request['assertionId']);
+         */
+        $keys = CacheUser::searchCache($request['assertionId']);
         if (!$keys) {
             return false;
         }
