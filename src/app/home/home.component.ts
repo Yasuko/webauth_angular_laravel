@@ -31,7 +31,7 @@ export class HomeComponent implements OnInit {
         builtIn:        false
     }
 
-    private server = 'https://yasukosan.dip.jp/';
+    private server = 'https://localhost/';
     private path = 'webauth_angular_laravel/server/public/';
 
     private apis    = {

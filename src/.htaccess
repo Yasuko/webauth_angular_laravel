@@ -1,18 +1,8 @@
-# ErrorDocument 404 /Angular4/test-app/src/
-
-# RewriteEngine On
-# RewriteBase /
-# RewriteCond %{REQUEST_FILENAME} !-f
-# RewriteCond %{REQUEST_FILENAME} !-d
-# RewriteRule . /Angular4/pazz-manager/dist/ [L]
-
-
-# BEGIN WordPress
 # <IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteBase /
 RewriteRule ^index\.html$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /fidoAngular2/dist/ [L]
+RewriteRule . /webauth_angular_laravel/dist/ [L]
 # </IfModule>

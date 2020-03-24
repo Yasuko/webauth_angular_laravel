@@ -10,7 +10,11 @@
 - nodejs 10.16 or later
 - angular 9 or later
 
-All the WebAuth implementation parts are described in export, so should they be readable with vue.js?
+Be sure to have an SSL key ready.
+You can use unauthenticated certificates only on Localhost.
+
+In the client-side code, all the parts related to the implementation are described by export.
+So, perhaps vue.js can be loaded?
 
 Please execute with "--recursive" option to include submodule when git clone
 
@@ -41,7 +45,14 @@ DB_PORT=3306
 DB_DATABASE=your database name
 DB_USERNAME=access user name
 DB_PASSWORD=access user password
+~~~
 
+If you use Redis, change the following
+~~~cmd
+server/.env
+
+#22
+REDIS_HOST=EnterRedishost
 ~~~
 
 # setup Server
