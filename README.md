@@ -1,5 +1,11 @@
 # WebAuth Angular Laravel
 
+### Reference Project
+[lbuchs/WebAuthn](https://github.com/lbuchs/WebAuthn)
+
+[kadotami/webauthn](https://github.com/kadotami/webauthn/blob/master/yii/controllers/api/AuthController.php)
+
+
 # Required
 - Apache
     - Authenticated SSL required
